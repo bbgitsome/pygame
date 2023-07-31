@@ -27,6 +27,7 @@ class Game:
         self.heart_height = self.heart_image.get_height()
 
         self.weapon_collided = False
+        self.bullet_collided = False
 
         self.enemy_bullets = []
 
@@ -59,6 +60,11 @@ class Game:
             self.player.has_bullet = True
         else:
             self.player.has_bullet = False
+
+        self.weapon_collided = False
+        self.display_weapon_message = True
+        self.show_bullet_message = True 
+        self.bullet_collided = False
 
     def render_text(self, text, font_size, color, x, y):
         font_path = "font/DePixelHalbfett.ttf"
@@ -126,6 +132,12 @@ class Game:
             if self.detect_collisions(self.player, enemy):
                 self.player_lives -= 1
                 return True
+        for bullet in self.enemy_bullets:
+            if self.detect_collisions(self.player, bullet):
+                self.player_lives -= 1
+                self.bullet_collided = True
+                self.enemy_bullets.remove(bullet)  # Remove the enemy bullet on collision
+                return True
         if self.detect_collisions(self.player, self.treasure):
             self.level += 1.0
             self.reset_map()
@@ -147,9 +159,8 @@ class Game:
 
             # Use masks to check for precise pixel-perfect collision
             if object_1.mask.overlap(object_2.mask, (offset_x, offset_y)):
-                
                 return True
-
+        
         return False
 
     def run_game_loop(self):
@@ -221,11 +232,11 @@ class Game:
                     self.level = 1.0
                     self.reset_map()
                 else:
-                    if self.player.has_bullet == False:
+                    if not self.bullet_collided and not self.weapon_collided:
                         self.player.x = 365  # Reset the player's x position
                         self.player.y = 725  # Reset the player's y position
-                    
+                        
                     # Enable the bullet for level 4 and when the player has collided with the weapon
-                    self.player.has_bullet = self.level >= 4.0 and self.weapon_collided   
+                    self.player.has_bullet = self.level >= 4.0 and self.weapon_collided
 
             self.clock.tick(60)

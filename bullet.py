@@ -12,6 +12,8 @@ class Bullet:
         self.image = pygame.image.load(image_path).convert_alpha()
         self.game_window = game_window
 
+        self.mask = pygame.mask.from_surface(self.image)
+
     def move(self):
         if self.is_enemy_bullet:
             self.y += self.speed  # Move downwards for enemy bullets
