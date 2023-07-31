@@ -26,6 +26,8 @@ class Game:
         self.heart_width = 30
         self.heart_height = self.heart_image.get_height()
 
+        self.weapon_collided = False
+
         self.reset_map()
     
     def reset_map(self):
@@ -49,6 +51,12 @@ class Game:
 
         # Set the player lives to 3 when the map is reset
         self.player_lives = 3
+
+        # Enable or disable the bullet based on the level
+        if self.level >= 4.0:
+            self.player.has_bullet = True
+        else:
+            self.player.has_bullet = False
 
     def draw_objects(self):
         self.game_window.fill(self.bg_color)
@@ -104,6 +112,10 @@ class Game:
             self.level += 1.0
             self.reset_map()
             return True
+        if self.level >= 4.0 and self.detect_collisions(self.player, self.weapon):
+            self.weapon_collided = True  # Set the flag to True when the player collides with the weapon
+            return True
+
         return False
 
     def detect_collisions(self, object_1, object_2):
@@ -124,6 +136,7 @@ class Game:
                     if object_2.health <= 0:
                         self.enemies.remove(object_2)
                 return True
+
         return False
 
     def run_game_loop(self):
@@ -175,8 +188,12 @@ class Game:
             if self.check_if_collided():
                 if self.player_lives == 0:
                     self.level = 1.0
-                    self.reset_map()    
+                    self.reset_map()
                 else:
-                    self.player = Player(365, 725, 65, 74, 'assets/player.png', 10, self.game_window)        
+                    self.player.x = 365  # Reset the player's x position
+                    self.player.y = 725  # Reset the player's y position
+                    
+                    # Enable the bullet for level 4 and when the player has collided with the weapon
+                    self.player.has_bullet = self.level >= 4.0 and self.weapon_collided   
 
             self.clock.tick(60)

@@ -10,11 +10,13 @@ class Player(GameObject):
         self.bullets = []
         self.bullet_speed = 10
         self.game_window = game_window
+        self.has_bullet = False  # New attribute to keep track of whether the player has a bullet or not
 
     def move(self, direction, x_direction):
         self.y += (direction * self.speed)
         self.x += (x_direction * self.speed)
 
     def shoot(self):
-        bullet = Bullet(self.x + self.width // 2, self.y, 5, 10, self.bullet_speed, 'assets/bullet.png', self.game_window)
-        self.bullets.append(bullet)
+        if self.has_bullet:
+            bullet = Bullet(self.x + self.width // 2, self.y, 5, 10, self.bullet_speed, 'assets/bullet.png', self.game_window)
+            self.bullets.append(bullet)
