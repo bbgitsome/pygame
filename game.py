@@ -30,6 +30,9 @@ class Game:
 
         self.enemy_bullets = []
 
+        self.display_weapon_message = True
+        self.show_bullet_message = True 
+
         self.reset_map()
     
     def reset_map(self):
@@ -57,6 +60,12 @@ class Game:
         else:
             self.player.has_bullet = False
 
+    def render_text(self, text, font_size, color, x, y):
+        font_path = "font/DePixelHalbfett.ttf"
+        font = pygame.font.Font(font_path, font_size)
+        text_surface = font.render(text, True, color)
+        self.game_window.blit(text_surface, (x, y))
+
     def draw_objects(self):
         self.game_window.fill(self.bg_color)
         self.game_window.blit(self.background.image, (self.background.x, self.background.y))
@@ -75,13 +84,19 @@ class Game:
 
         # Display level label at the top left
         font_path = "font/DePixelHalbfett.ttf"
-        font = pygame.font.Font(font_path, 36) 
+        font = pygame.font.Font(font_path, 26) 
         level_text = f"Level {int(self.level)}"  # Convert level to integer and format the text
         label_surface = font.render(level_text, True, (255, 255, 255))  # Set the color for the level label text
         self.game_window.blit(label_surface, (10, 10))  # Set the position of the label on the screen
 
         # Draw the hearts (player lives)
         self.draw_hearts()
+
+        if self.level >= 4.0 and self.display_weapon_message:
+            self.render_text("Weapon here!", 15, (255, 255, 255), 640, 680)
+
+        if self.player.has_bullet and self.show_bullet_message:
+            self.render_text("Press SPACE to use the weapon.", 15, (255, 255, 255), 230, 650)
 
         pygame.display.update()
 
@@ -117,6 +132,7 @@ class Game:
             return True
         if self.level >= 4.0 and self.detect_collisions(self.player, self.weapon):
             self.weapon_collided = True  # Set the flag to True when the player collides with the weapon
+            self.display_weapon_message = False  # Hide the weapon message
             return True
 
         return False
@@ -160,6 +176,7 @@ class Game:
                     # Add shooting event
                     elif event.key == pygame.K_SPACE:
                         self.player.shoot()
+                        self.show_bullet_message = False
                 elif event.type == pygame.KEYUP:
                     if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                         player_direction = 0
@@ -178,7 +195,7 @@ class Game:
                 for enemy in self.enemies[:]:
                     if bullet.check_collision(enemy):
                         self.player.bullets.remove(bullet)
-                        enemy.receive_damage(20)  # Reduce enemy health by 25
+                        enemy.receive_damage(1)  # Reduce enemy health
                         if enemy.is_dead():
                             self.enemies.remove(enemy)
 
@@ -204,8 +221,9 @@ class Game:
                     self.level = 1.0
                     self.reset_map()
                 else:
-                    self.player.x = 365  # Reset the player's x position
-                    self.player.y = 725  # Reset the player's y position
+                    if self.player.has_bullet == False:
+                        self.player.x = 365  # Reset the player's x position
+                        self.player.y = 725  # Reset the player's y position
                     
                     # Enable the bullet for level 4 and when the player has collided with the weapon
                     self.player.has_bullet = self.level >= 4.0 and self.weapon_collided   
