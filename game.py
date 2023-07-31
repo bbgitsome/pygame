@@ -28,6 +28,8 @@ class Game:
 
         self.weapon_collided = False
 
+        self.enemy_bullets = []
+
         self.reset_map()
     
     def reset_map(self):
@@ -35,10 +37,7 @@ class Game:
         speed = 5 + (self.level * 5)
 
         if self.level == 4.0:
-            self.enemies = [Enemy(0,580,50,50, 'assets/blob.png', speed),
-                        Enemy(390,440,50,50, 'assets/blob.png', speed),
-                        Enemy(0,300,50,50, 'assets/blob.png', speed),
-                        Enemy(390,160,50,50, 'assets/blob.png', speed)]
+            self.enemies = [Enemy(390,160,50,50, 'assets/alien.png', 5)]
         elif self.level == 3.0:
             self.enemies = [Enemy(0,580,50,50, 'assets/blob.png', speed),
                         Enemy(390,440,50,50, 'assets/blob.png', speed),
@@ -66,6 +65,10 @@ class Game:
         self.game_window.blit(self.player.image, (self.player.x, self.player.y))
         for bullet in self.player.bullets:
             self.game_window.blit(bullet.image, (bullet.x, bullet.y))
+
+        for bullet in self.enemy_bullets:
+            self.game_window.blit(bullet.image, (bullet.x, bullet.y))
+
         for enemy in self.enemies:
             self.game_window.blit(enemy.image, (enemy.x, enemy.y))
             enemy.draw_health_bar(self.game_window)
@@ -128,13 +131,7 @@ class Game:
 
             # Use masks to check for precise pixel-perfect collision
             if object_1.mask.overlap(object_2.mask, (offset_x, offset_y)):
-                # Update enemy health when hit by a bullet
-                if isinstance(object_1, Bullet):
-                    object_2.receive_damage(25)  # Reduce enemy health by 25
-
-                    # If enemy health is 0 or less, remove the enemy from the game
-                    if object_2.health <= 0:
-                        self.enemies.remove(object_2)
+                
                 return True
 
         return False
@@ -172,6 +169,10 @@ class Game:
             #Execute logic
             self.move_objects(player_direction, x_player_direction)
 
+            # Update enemies before shooting
+            for enemy in self.enemies:
+                enemy.update()
+
             # Check bullet-enemy collisions and remove dead enemies
             for bullet in self.player.bullets[:]:
                 for enemy in self.enemies[:]:
@@ -180,6 +181,19 @@ class Game:
                         enemy.receive_damage(20)  # Reduce enemy health by 25
                         if enemy.is_dead():
                             self.enemies.remove(enemy)
+
+            # Enemy shooting logic for level 4
+            if self.level >= 4.0:
+                for enemy in self.enemies:
+                    enemy.shoot(self.enemy_bullets)
+
+            # Move enemy bullets
+            for bullet in self.enemy_bullets:
+                bullet.move()
+
+                # Remove the bullet if it goes off-screen
+                if bullet.y > self.height:
+                    self.enemy_bullets.remove(bullet)
 
             #Update display
             self.draw_objects()

@@ -1,5 +1,6 @@
 import pygame
 from gameObject import GameObject
+from bullet import Bullet
 
 class Enemy(GameObject):
     def __init__(self, x, y, width, height, image_path, speed):
@@ -12,6 +13,11 @@ class Enemy(GameObject):
         self.health = self.max_health
         self.health = self.max_health
         self.is_alive = True
+
+        # Add attributes for shooting
+        self.can_shoot = False
+        self.shoot_delay = 800  # Time in milliseconds (adjust as needed)
+        self.last_shot_time = pygame.time.get_ticks()
     
     def move(self, max_width):
         if self.x <= 0:
@@ -44,3 +50,21 @@ class Enemy(GameObject):
 
     def is_dead(self):
         return not self.is_alive
+    
+    def update(self):
+        # Check if enough time has passed since the last shot
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_shot_time >= self.shoot_delay:
+            self.can_shoot = True
+
+    def shoot(self, bullets):
+        if self.can_shoot:
+            bullet_speed = 5  # Adjust the speed as needed
+            bullet_width = 5  # Adjust the width of the bullet
+            bullet_height = 10  # Adjust the height of the bullet
+
+            bullet = Bullet(self.x + self.width // 2, self.y + self.height, bullet_width, bullet_height, bullet_speed, 'assets/bullet.png', None, is_enemy_bullet=True)
+            bullets.append(bullet)
+
+            self.last_shot_time = pygame.time.get_ticks()  # Record the time of the last shot
+            self.can_shoot = False  # Reset the flag to prevent immediate shooting
