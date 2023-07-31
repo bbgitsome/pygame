@@ -11,6 +11,7 @@ class Enemy(GameObject):
         self.max_health = 100
         self.health = self.max_health
         self.health = self.max_health
+        self.is_alive = True
     
     def move(self, max_width):
         if self.x <= 0:
@@ -35,3 +36,11 @@ class Enemy(GameObject):
         # Draw the health bar rectangle
         health_bar_rect = pygame.Rect(self.x, self.y - 10, health_width, 5)
         pygame.draw.rect(game_window, health_bar_color, health_bar_rect)
+    
+    def receive_damage(self, damage):
+        self.health -= damage
+        if self.health <= 0:
+            self.is_alive = False
+
+    def is_dead(self):
+        return not self.is_alive

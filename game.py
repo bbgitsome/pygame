@@ -29,7 +29,7 @@ class Game:
         self.reset_map()
     
     def reset_map(self):
-        self.player = Player(365, 725, 65, 74, 'assets/player.png', 10)
+        self.player = Player(365, 725, 65, 74, 'assets/player.png', 10, self.game_window)
         speed = 5 + (self.level * 5)
 
         if self.level == 4.0:
@@ -116,6 +116,13 @@ class Game:
 
             # Use masks to check for precise pixel-perfect collision
             if object_1.mask.overlap(object_2.mask, (offset_x, offset_y)):
+                # Update enemy health when hit by a bullet
+                if isinstance(object_1, Bullet):
+                    object_2.receive_damage(25)  # Reduce enemy health by 25
+
+                    # If enemy health is 0 or less, remove the enemy from the game
+                    if object_2.health <= 0:
+                        self.enemies.remove(object_2)
                 return True
         return False
 
@@ -152,6 +159,15 @@ class Game:
             #Execute logic
             self.move_objects(player_direction, x_player_direction)
 
+            # Check bullet-enemy collisions and remove dead enemies
+            for bullet in self.player.bullets[:]:
+                for enemy in self.enemies[:]:
+                    if bullet.check_collision(enemy):
+                        self.player.bullets.remove(bullet)
+                        enemy.receive_damage(20)  # Reduce enemy health by 25
+                        if enemy.is_dead():
+                            self.enemies.remove(enemy)
+
             #Update display
             self.draw_objects()
 
@@ -161,6 +177,6 @@ class Game:
                     self.level = 1.0
                     self.reset_map()    
                 else:
-                    self.player = Player(365, 725, 65, 74, 'assets/player.png', 10)        
+                    self.player = Player(365, 725, 65, 74, 'assets/player.png', 10, self.game_window)        
 
             self.clock.tick(60)
