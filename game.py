@@ -28,7 +28,6 @@ class Game:
 
         self.weapon_collided = False
         self.bullet_collided = False
-        self.treasure_collided = False
 
         self.enemy_bullets = []
 
@@ -66,7 +65,6 @@ class Game:
 
         self.weapon_collided = False
         self.bullet_collided = False
-        self.treasure_collided = False
         self.display_weapon_message = True
         self.show_bullet_message = True 
 
@@ -157,7 +155,6 @@ class Game:
 
         if self.detect_collisions(self.player, self.treasure):
             if self.level == 4.0:
-                self.treasure_collided = True
                 self.victory = True
                 self.level = 1.0
                 self.reset_map()
@@ -262,9 +259,5 @@ class Game:
                         
                     # Enable the bullet for level 4 and when the player has collided with the weapon
                     self.player.has_bullet = self.level >= 4.0 and self.weapon_collided
-
-                    # Check for victory condition in level 4
-                    if self.level >= 4.0 and len(self.enemies) == 0 and self.treasure_collided:
-                        self.victory = True
 
             self.clock.tick(60)
