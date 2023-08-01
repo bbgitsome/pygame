@@ -14,9 +14,9 @@ class Game:
 
         self.clock = pygame.time.Clock()
 
-        self.background = GameObject(0, 0, self.width, self.height, 'assets/background.jpg')
+        self.background = GameObject(0, 0, self.width, self.height, 'assets/BG.jpg')
 
-        self.treasure = GameObject(365, 50, 65, 74, 'assets/door.png')
+        self.treasure = GameObject(365, 60, 90, 100, 'assets/door.png')
     
         self.weapon = GameObject(707, 704, 38, 45, 'assets/powerup.png')
 
@@ -40,20 +40,20 @@ class Game:
         self.reset_map()
     
     def reset_map(self):
-        self.player = Player(365, 725, 65, 74, 'assets/player.png', 10, self.game_window)
-        speed = 5 + (self.level * 5)
+        self.player = Player(365, 725, 80, 120, 'assets/player.png', 10, self.game_window)
+        speed = 1 + (self.level * 3)
 
         if self.level == 4.0:
-            self.enemies = [Enemy(390,160,70,70, 'assets/bosslevel.png', 5)]
+            self.enemies = [Enemy(390,200,110,100, 'assets/bosslevel.png', 5)]
         elif self.level == 3.0:
-            self.enemies = [Enemy(0,580,50,50, 'assets/lev3en(2).png', speed),
-                        Enemy(390,440,50,50, 'assets/lev3en(1).png', speed),
-                        Enemy(0,300,50,50, 'assets/lev3en.png', speed)]
+            self.enemies = [Enemy(0,580,80,80, 'assets/lev3en(2).png', speed),
+                        Enemy(390,440,80,80, 'assets/lev3en(1).png', speed),
+                        Enemy(0,300,80,80, 'assets/lev3en.png', speed)]
         elif self.level == 2.0:
-            self.enemies = [Enemy(0,580,50,50, 'assets/lev2en(1).png', speed),
-                        Enemy(390,440,50,50, 'assets/lev2en.png', speed)]
+            self.enemies = [Enemy(0,550,80,80, 'assets/lev2en(1).png', speed),
+                        Enemy(390,300,80,80, 'assets/lev2en.png', speed)]
         else:
-            self.enemies = [Enemy(0,580,50,50, 'assets/lev1en.png', speed)]
+            self.enemies = [Enemy(0,500,60,60, 'assets/lev1en.png', speed)]
 
         # Set the player lives to 3 when the map is reset
         self.player_lives = 3
@@ -106,7 +106,7 @@ class Game:
         self.draw_hearts()
 
         if self.level >= 4.0 and self.display_weapon_message:
-            self.render_text("Find a weapon!", 20, (255, 255, 255), 295, 450)
+            self.render_text("Tip: There's a secret weapon hidden in abyss..", 20, (255, 255, 255), 90, 390)
 
         if self.player.has_bullet and self.show_bullet_message:
             self.render_text("Weapon found!", 20, (255, 255, 255), 290, 450)

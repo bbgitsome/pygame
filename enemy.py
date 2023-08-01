@@ -60,10 +60,10 @@ class Enemy(GameObject):
     def shoot(self, bullets):
         if self.can_shoot:
             bullet_speed = 5  # Adjust the speed as needed
-            bullet_width = 5  # Adjust the width of the bullet
+            bullet_width = 10 # Adjust the width of the bullet
             bullet_height = 10  # Adjust the height of the bullet
 
-            bullet = Bullet(self.x + self.width // 2, self.y + self.height, bullet_width, bullet_height, bullet_speed, 'assets/bullet.png', None, is_enemy_bullet=True)
+            bullet = Bullet(self.x + self.width // 2, self.y + self.height, bullet_width, bullet_height, bullet_speed, 'assets/fire.png', None, is_enemy_bullet=True)
             bullets.append(bullet)
 
             self.last_shot_time = pygame.time.get_ticks()  # Record the time of the last shot

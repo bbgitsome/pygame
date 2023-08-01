@@ -18,5 +18,5 @@ class Player(GameObject):
 
     def shoot(self):
         if self.has_bullet:
-            bullet = Bullet(self.x + self.width // 2, self.y, 5, 10, self.bullet_speed, 'assets/bullet.png', self.game_window)
+            bullet = Bullet(self.x + self.width // 2, self.y, 5, 10, self.bullet_speed, 'assets/blue.png', self.game_window)
             self.bullets.append(bullet)
