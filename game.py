@@ -28,11 +28,14 @@ class Game:
 
         self.weapon_collided = False
         self.bullet_collided = False
+        self.treasure_collided = False
 
         self.enemy_bullets = []
 
         self.display_weapon_message = True
         self.show_bullet_message = True 
+
+        self.victory = False
 
         self.reset_map()
     
@@ -41,7 +44,7 @@ class Game:
         speed = 5 + (self.level * 5)
 
         if self.level == 4.0:
-            self.enemies = [Enemy(390,160,50,50, 'assets/alien.png', 5)]
+            self.enemies = [Enemy(390,160,70,70, 'assets/alien.png', 5)]
         elif self.level == 3.0:
             self.enemies = [Enemy(0,580,50,50, 'assets/blob.png', speed),
                         Enemy(390,440,50,50, 'assets/blob.png', speed),
@@ -62,9 +65,10 @@ class Game:
             self.player.has_bullet = False
 
         self.weapon_collided = False
+        self.bullet_collided = False
+        self.treasure_collided = False
         self.display_weapon_message = True
         self.show_bullet_message = True 
-        self.bullet_collided = False
 
     def render_text(self, text, font_size, color, x, y):
         font_path = "font/DePixelHalbfett.ttf"
@@ -75,7 +79,8 @@ class Game:
     def draw_objects(self):
         self.game_window.fill(self.bg_color)
         self.game_window.blit(self.background.image, (self.background.x, self.background.y))
-        self.game_window.blit(self.treasure.image, (self.treasure.x, self.treasure.y))
+        if self.level < 4.0 or (self.level >= 4.0 and len(self.enemies) == 0):
+            self.game_window.blit(self.treasure.image, (self.treasure.x, self.treasure.y))
         self.game_window.blit(self.weapon.image, (self.weapon.x, self.weapon.y))
         self.game_window.blit(self.player.image, (self.player.x, self.player.y))
         for bullet in self.player.bullets:
@@ -104,6 +109,14 @@ class Game:
         if self.player.has_bullet and self.show_bullet_message:
             self.render_text("Press SPACE to use the weapon.", 15, (255, 255, 255), 230, 650)
 
+        if self.victory:
+            self.render_text("Victory!", 30, (255, 255, 255), 350, 350)
+            victory_timer += 1
+            if victory_timer >= 180:  # Display victory message for 3 seconds (180 frames at 60 FPS)
+                self.level = 1.0
+                victory_timer = 0 
+                self.victory = False
+                self.reset_map()
         pygame.display.update()
 
     def draw_hearts(self):
@@ -138,13 +151,21 @@ class Game:
                 self.bullet_collided = True
                 self.enemy_bullets.remove(bullet)  # Remove the enemy bullet on collision
                 return True
-        if self.detect_collisions(self.player, self.treasure):
-            self.level += 1.0
-            self.reset_map()
-            return True
+        
         if self.level >= 4.0 and self.detect_collisions(self.player, self.weapon):
             self.weapon_collided = True  # Set the flag to True when the player collides with the weapon
             self.display_weapon_message = False  # Hide the weapon message
+            return True
+
+        if self.detect_collisions(self.player, self.treasure):
+            if self.level == 4.0:
+                self.treasure_collided = True
+                self.victory = True
+                self.level = 1.0
+                self.reset_map()
+            else:
+                self.level += 1.0
+                self.reset_map()
             return True
 
         return False
@@ -167,6 +188,7 @@ class Game:
 
         player_direction = 0
         x_player_direction = 0
+        victory_timer = 0
 
         while True:
             #Handle events
@@ -233,10 +255,18 @@ class Game:
                     self.reset_map()
                 else:
                     if not self.bullet_collided and not self.weapon_collided:
-                        self.player.x = 365  # Reset the player's x position
-                        self.player.y = 725  # Reset the player's y position
+                        self.player.x = 365
+                        self.player.y = 725
+                    elif self.weapon_collided and not self.player.has_bullet:
+                        self.player.x = 365
+                        self.player.y = 725
+                        self.show_bullet_message = True
                         
                     # Enable the bullet for level 4 and when the player has collided with the weapon
                     self.player.has_bullet = self.level >= 4.0 and self.weapon_collided
+
+                    # Check for victory condition in level 4
+                    if self.level >= 4.0 and len(self.enemies) == 0 and self.treasure_collided:
+                        self.victory = True
 
             self.clock.tick(60)
