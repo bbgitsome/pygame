@@ -108,11 +108,8 @@ class Game:
             self.render_text("Press SPACE to use the weapon.", 15, (255, 255, 255), 230, 650)
 
         if self.victory:
-            self.render_text("Victory!", 30, (255, 255, 255), 350, 350)
-            pygame.time.delay(3000)
-            self.level = 1.0
-            self.victory = False
-            self.reset_map()
+            self.render_text("Victory!", 30, (255, 255, 255), 320, 350)
+            
         pygame.display.update()
 
     def draw_hearts(self):
@@ -192,6 +189,7 @@ class Game:
                 if event.type == pygame.QUIT:
                     return
                 elif event.type == pygame.KEYDOWN:
+                    self.victory = False
                     if event.key == pygame.K_UP:
                         player_direction = -1
                     elif event.key == pygame.K_DOWN:
