@@ -106,9 +106,10 @@ class Game:
         self.draw_hearts()
 
         if self.level >= 4.0 and self.display_weapon_message:
-            self.render_text("Weapon here!", 15, (255, 255, 255), 640, 680)
+            self.render_text("Find a weapon!", 20, (255, 255, 255), 295, 450)
 
         if self.player.has_bullet and self.show_bullet_message:
+            self.render_text("Weapon found!", 20, (255, 255, 255), 290, 450)
             self.render_text("Press SPACE to use the weapon.", 15, (255, 255, 255), 230, 650)
 
         if self.victory:
