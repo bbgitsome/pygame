@@ -14,11 +14,11 @@ class Game:
 
         self.clock = pygame.time.Clock()
 
-        self.background = GameObject(0, 0, self.width, self.height, 'assets/background.png')
+        self.background = GameObject(0, 0, self.width, self.height, 'assets/background.jpg')
 
-        self.treasure = GameObject(365, 50, 65, 74, 'assets/chest.png')
+        self.treasure = GameObject(365, 50, 65, 74, 'assets/door.png')
     
-        self.weapon = GameObject(707, 704, 38, 45, 'assets/weapon.png')
+        self.weapon = GameObject(707, 704, 38, 45, 'assets/powerup.png')
 
         self.level = 1.0
 
@@ -44,16 +44,16 @@ class Game:
         speed = 5 + (self.level * 5)
 
         if self.level == 4.0:
-            self.enemies = [Enemy(390,160,70,70, 'assets/alien.png', 5)]
+            self.enemies = [Enemy(390,160,70,70, 'assets/bosslevel.png', 5)]
         elif self.level == 3.0:
-            self.enemies = [Enemy(0,580,50,50, 'assets/blob.png', speed),
-                        Enemy(390,440,50,50, 'assets/blob.png', speed),
-                        Enemy(0,300,50,50, 'assets/blob.png', speed)]
+            self.enemies = [Enemy(0,580,50,50, 'assets/lev3en(2).png', speed),
+                        Enemy(390,440,50,50, 'assets/lev3en(1).png', speed),
+                        Enemy(0,300,50,50, 'assets/lev3en.png', speed)]
         elif self.level == 2.0:
-            self.enemies = [Enemy(0,580,50,50, 'assets/blob.png', speed),
-                        Enemy(390,440,50,50, 'assets/blob.png', speed)]
+            self.enemies = [Enemy(0,580,50,50, 'assets/lev2en(1).png', speed),
+                        Enemy(390,440,50,50, 'assets/lev2en.png', speed)]
         else:
-            self.enemies = [Enemy(0,580,50,50, 'assets/blob.png', speed)]
+            self.enemies = [Enemy(0,580,50,50, 'assets/lev1en.png', speed)]
 
         # Set the player lives to 3 when the map is reset
         self.player_lives = 3
