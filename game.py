@@ -35,6 +35,7 @@ class Game:
         self.show_bullet_message = True 
 
         self.victory = False
+        self.game_over = False
 
         self.reset_map()
     
@@ -93,8 +94,11 @@ class Game:
 
         # Display level label at the top left
         font_path = "font/DePixelHalbfett.ttf"
-        font = pygame.font.Font(font_path, 26) 
-        level_text = f"Level {int(self.level)}"  # Convert level to integer and format the text
+        font = pygame.font.Font(font_path, 26)
+        if self.level == 4:
+            level_text = "Boss Level"
+        else:
+            level_text = f"Level {int(self.level)}"  # Convert level to integer and format the text
         label_surface = font.render(level_text, True, (255, 255, 255))  # Set the color for the level label text
         self.game_window.blit(label_surface, (10, 10))  # Set the position of the label on the screen
 
@@ -109,6 +113,9 @@ class Game:
 
         if self.victory:
             self.render_text("Victory!", 30, (255, 255, 255), 320, 350)
+        
+        if self.game_over:
+            self.render_text("Game Over!", 30, (255, 255, 255), 280, 350)
             
         pygame.display.update()
 
@@ -190,6 +197,7 @@ class Game:
                     return
                 elif event.type == pygame.KEYDOWN:
                     self.victory = False
+                    self.game_over = False
                     if event.key == pygame.K_UP:
                         player_direction = -1
                     elif event.key == pygame.K_DOWN:
@@ -244,6 +252,7 @@ class Game:
             # Detect collisions
             if self.check_if_collided():
                 if self.player_lives == 0:
+                    self.game_over = True
                     self.level = 1.0
                     self.reset_map()
                 else:
