@@ -111,12 +111,10 @@ class Game:
 
         if self.victory:
             self.render_text("Victory!", 30, (255, 255, 255), 350, 350)
-            victory_timer += 1
-            if victory_timer >= 180:  # Display victory message for 3 seconds (180 frames at 60 FPS)
-                self.level = 1.0
-                victory_timer = 0 
-                self.victory = False
-                self.reset_map()
+            pygame.time.delay(3000)
+            self.level = 1.0
+            self.victory = False
+            self.reset_map()
         pygame.display.update()
 
     def draw_hearts(self):
